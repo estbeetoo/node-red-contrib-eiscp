@@ -1,0 +1,35 @@
+{
+  "name": "node-red-contrib-eiscp",
+  "version": "0.3.0",
+  "description": "Global Cache (iTach & iTach Flex) for node-red",
+  "main": "eiscp.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/estbeetoo/node-red-contrib-eiscp.git"
+  },
+  "keywords": [
+    "node-red",
+    "gc",
+    "global cache",
+    "Global Caché",
+    "itach",
+    "eiscp"
+  ],
+  "node-red": {
+    "nodes": {
+      "eiscp": "eiscp.js"
+    }
+  },
+  "author": "Alexander Borovsky <aborovsky@beetoo.me> (http://beetoo.me)",
+  "license": "Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)",
+  "bugs": {
+    "url": "https://github.com/estbeetoo/node-red-contrib-eiscp/issues"
+  },
+  "homepage": "https://github.com/estbeetoo/node-red-contrib-eiscp#readme",
+  "dependencies": {
+    "eiscp": "0.2.*"
+  }
+}
