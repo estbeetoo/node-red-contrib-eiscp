@@ -123,6 +123,12 @@ module.exports = function (RED) {
             // init a new one-off connection from the effectively singleton EISCPController
             // there seems to be no way to reuse the outgoing conn in adreek/node-eiscpjs
             this.ctrl.initializeEISCPConnection(function (connection) {
+                function onConnect() {
+                    connection.command(data.toString(), function (err) {
+                        callback && callback(err);
+                    });
+                }
+
                 if (connection.is_connected)
                     nodeStatusConnected();
                 else
@@ -140,12 +146,10 @@ module.exports = function (RED) {
                         connection.command(data.toString(), function (err) {
                             callback && callback(err);
                         });
-                    else
-                        connection.once('connect', function () {
-                            connection.command(data.toString(), function (err) {
-                                callback && callback(err);
-                            });
-                        });
+                    else {
+                        connection.removeListener('connect', onConnect);
+                        connection.once('connect', onConnect);
+                    }
                 }
                 catch (err) {
                     node.error('error calling send: ' + err);
@@ -155,7 +159,7 @@ module.exports = function (RED) {
         }
     }
 
-    //
+//
     RED.nodes.registerType("eiscp-out", EISCPOut);
 
     /**
