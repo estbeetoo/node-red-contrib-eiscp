@@ -24,6 +24,27 @@ It will include three nodes:
 
 According to official documentation: http://nodered.org/docs/getting-started/adding-nodes.html
  
+# Examples
+
+Control your device using Amazon Alexa
+
+![alt text](https://i.gyazo.com/807772f70a330517afc66dd9d2d2747a.png)
+
+1. Drag 'Alexa Local'
+
+2. Drag 'Function' and configure with appopriate command
+
+![alt text](https://i.gyazo.com/1f16509f6773658805168d32826dc296.png)
+
+Command list available here:
+https://raw.githubusercontent.com/tillbaks/node-eiscp/master/eiscp-commands.json
+
+
+3. Drag and configure 'eiscp out' node 
+
+![alt text](https://i.gyazo.com/0674270018e67d34f43fab926f32113e.png)
+
+
 # License
 
 ![Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)](https://licensebuttons.net/l/by-nc-sa/4.0/88x31.png "CC BY-NC-SA 4.0")
