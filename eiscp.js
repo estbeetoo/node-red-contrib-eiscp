@@ -79,6 +79,7 @@ module.exports = function (RED) {
             var payload = msg.payload;
             var sendRaw = false;
             if (msg.hasOwnProperty('raw') && msg.raw) {
+                sendRaw = true;
                 payload = msg.raw;
             }
 
