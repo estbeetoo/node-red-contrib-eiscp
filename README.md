@@ -24,6 +24,12 @@ It will include three nodes:
 
 According to official documentation: http://nodered.org/docs/getting-started/adding-nodes.html
  
+## Sending Raw data
+
+It is possible to send a raw data command, set `msg.raw` to the command you want to send. If msg.raw is set, this will overwrite any msg.payload, and it will send the command in raw format.
+
+Example: `msg.raw = 'NPR03'` (this will select and play the 3rd item in your internet radio favorites)  
+ 
 # Examples
 
 Control your device using Amazon Alexa

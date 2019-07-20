@@ -75,8 +75,14 @@ module.exports = function (RED) {
         var node = this;
         this.on("input", function (msg) {
             node.log('eiscpout.onInput msg[' + util.inspect(msg) + ']');
-            if (!(msg && msg.hasOwnProperty('payload'))) return;
+            if (!(msg && (msg.hasOwnProperty('payload') || msg.hasOwnProperty('raw')))) return;
             var payload = msg.payload;
+            var sendRaw = false;
+            if (msg.hasOwnProperty('raw') && msg.raw) {
+                sendRaw = true;
+                payload = msg.raw;
+            }
+
             if (typeof(msg.payload) === "object") {
                 payload = msg.payload;
             } else if (typeof(msg.payload) === "string") {
@@ -91,7 +97,7 @@ module.exports = function (RED) {
                 return;
             }
 
-            node.send(payload, function (err) {
+            node.send(payload, sendRaw, function (err) {
                 if (err) {
                     node.error('send error: ' + err);
                 }
@@ -118,15 +124,21 @@ module.exports = function (RED) {
             node.status({fill: "green", shape: "ring", text: "connecting"});
         }
 
-        this.send = function (data, callback) {
+        this.send = function (data, sendRaw, callback) {
             node.log('send data[' + data + ']');
             // init a new one-off connection from the effectively singleton EISCPController
             // there seems to be no way to reuse the outgoing conn in adreek/node-eiscpjs
             this.ctrl.initializeEISCPConnection(function (connection) {
                 function onConnect() {
-                    connection.command(data.toString(), function (err) {
-                        callback && callback(err);
-                    });
+                    if (sendRaw) {
+                        connection.raw(data.toString(), function (err) {
+                            callback && callback(err);
+                        });
+                    } else {
+                        connection.command(data.toString(), function (err) {
+                            callback && callback(err);
+                        });
+                    }
                 }
 
                 if (connection.is_connected)
@@ -143,9 +155,15 @@ module.exports = function (RED) {
                 try {
                     node.log("send:  " + JSON.stringify(data));
                     if (connection.is_connected)
-                        connection.command(data.toString(), function (err) {
-                            callback && callback(err);
-                        });
+                        if (sendRaw) {
+                            connection.raw(data.toString(), function (err) {
+                                callback && callback(err);
+                            });
+                        } else {
+                            connection.command(data.toString(), function (err) {
+                                callback && callback(err);
+                            });
+                        }
                     else {
                         connection.removeListener('connect', onConnect);
                         connection.once('connect', onConnect);
