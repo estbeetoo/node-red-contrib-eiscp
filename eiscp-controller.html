@@ -1,0 +1,33 @@
+<script type="text/x-red" data-template-name="eiscp-controller">
+    <div class="form-row">
+        <label for="node-config-input-name"><i class="icon-tag"></i> Name</label>
+        <input type="text" id="node-config-input-name" placeholder="Name">
+    </div>
+    <div class="form-row">
+        <label for="node-config-input-host"><i class="icon-bookmark"></i> Host</label>
+        <input type="text" id="node-config-input-host">
+    </div>
+    <div class="form-row">
+        <label for="node-config-input-port"><i class="icon-bookmark"></i> Port</label>
+        <input type="text" id="node-config-input-port" placeholder="60128">
+    </div>
+    <div class="form-row">
+        <label for="node-config-input-model"><i class="icon-bookmark"></i> Model</label>
+        <input type="text" id="node-config-input-model" placeholder="model (for example: DTR-6.6)">
+    </div>
+</script>
+
+<script type="text/javascript">
+    RED.nodes.registerType('eiscp-controller', {
+        category: 'config',
+        defaults: {
+            name: {value: ""},
+            host: {value: "127.0.0.1", required: true},
+            port: {value: 60128, required: false, validate: RED.validators.number()},
+            model: {value: "", required: true}
+        },
+        label: function () {
+            return (this.name || 'eiscp' ) + "@" + this.host + ":" + this.port;
+        }
+    });
+</script>

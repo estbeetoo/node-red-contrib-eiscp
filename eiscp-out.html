@@ -1,0 +1,41 @@
+<script type="text/x-red" data-template-name="eiscp-out">
+    <div class="form-row">
+        <label for="node-input-name"><i class="icon-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+    <div class="form-row">
+        <label for="node-input-controller"><i class="icon-bookmark"></i> Controller</label>
+        <input type="text" id="node-input-controller">
+    </div>
+</script>
+
+<script type="text/x-red" data-help-name="eiscp-out">
+    <p>
+        Use this to <b>send</b> EISCP packets to Onkyo/Integra device familiar with EISCP protocol.<br/>
+    	<b>msg.payload</b> must be a JavaScript object (with <b>cmd<b> and <b>args</b> fields) or a string.
+    </p>
+    <p>
+        For example: <code>system-power=on</code> or <code>system-power=standby</code>
+    </p>
+    <p>
+        Please, take a look at full list of commands here: https://raw.githubusercontent.com/estbeetoo/eiscp.js/master/eiscp-commands.json
+    <p>
+</script>
+
+<script type="text/javascript">
+    RED.nodes.registerType('eiscp-out', {
+        category: 'output',
+        color: '#26b050',
+        defaults: {
+            name: {value: ""},
+            controller: {value: "", type: "eiscp-controller"}
+        },
+        inputs: 1,
+        outputs: 0,
+        align: 'right',
+        icon: "bridge-dash.png",
+        label: function () {
+            return (this.groupaddr || this.name || "eiscp");
+        }
+    });
+</script>
