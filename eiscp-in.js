@@ -17,6 +17,7 @@ module.exports = function (RED) {
         this.name = config.name;
         this.connection = null;
         var node = this;
+        this.currentError = null;
         //node.log('new EISCPIn, config: %j', config);
         var eiscpjsController = RED.nodes.getNode(config.controller);
         /* ===== Node-Red events ===== */
@@ -37,15 +38,20 @@ module.exports = function (RED) {
         }
 
         function nodeStatusConnected() {
+            node.currentError = null; 
             node.status({fill: "green", shape: "dot", text: "connected"});
         }
 
         function nodeStatusDisconnected() {
-            node.status({fill: "red", shape: "dot", text: "disconnected"});
+            if(node.currentError == null){
+                node.status({fill: "red", shape: "dot", text: "disconnected"});
+            } else {
+                nodeStatusDisconnectedWithError(node.currentError);
+            }
         }
         
         function nodeStatusDisconnectedWithError(error) {
-            var statusText = "disconnected (" + error.code + ")";
+            var statusText = "disconnected (" + error + ")";
             node.status({fill: "red", shape: "dot", text: statusText});
         }
 
@@ -75,7 +81,9 @@ module.exports = function (RED) {
             node.connection.on('connect', nodeStatusConnected);
             node.connection.removeListener('close', nodeStatusDisconnected);
             node.connection.on('close', nodeStatusDisconnected);
+            node.connection.removeListener('error', nodeStatusDisconnected);
             node.connection.on('error', function (err) {
+                    node.currentError = err;
                     nodeStatusDisconnectedWithError(err);
             });
         });
