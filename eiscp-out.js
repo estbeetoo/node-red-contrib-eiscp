@@ -67,6 +67,11 @@ module.exports = function (RED) {
         function nodeStatusConnecting() {
             node.status({fill: "green", shape: "ring", text: "connecting"});
         }
+        
+        function nodeStatusDisconnectedWithError(error) {
+            var statusText = "disconnected (" + error.code + ")";
+            node.status({fill: "red", shape: "dot", text: statusText});
+        }
 
         this.send = function (data, sendRaw, callback) {
             node.log('send data[' + data + ']');
@@ -95,6 +100,9 @@ module.exports = function (RED) {
                 connection.on('connect', nodeStatusConnected);
                 connection.removeListener('close', nodeStatusDisconnected);
                 connection.on('close', nodeStatusDisconnected);
+                connection.on('error', function (err) {
+                    nodeStatusDisconnectedWithError(err);
+                });
 
                 try {
                     node.log("send:  " + JSON.stringify(data));
