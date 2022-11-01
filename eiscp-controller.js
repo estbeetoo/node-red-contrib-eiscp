@@ -37,9 +37,6 @@ module.exports = function (RED) {
                 }
                 node.log('configuring to EISCP device at ' + config.host + ':' + config.port + ' model[' + config.model + ']');
                 node.eiscpjsconn = eiscp;
-                node.eiscpjsconn.on('error', function (err) {
-                    node.error('Error: ' + err.toString());
-                });
                 node.eiscpjsconn.connect({
                     host: config.host,
                     model: config.model,
