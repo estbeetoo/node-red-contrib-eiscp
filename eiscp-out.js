@@ -17,6 +17,7 @@ module.exports = function (RED) {
         this.name = config.name;
         this.ctrl = RED.nodes.getNode(config.controller);
         var node = this;
+        this.currentError = null;
         this.on("input", function (msg) {
             node.log('eiscpout.onInput msg[' + util.inspect(msg) + ']');
             if (!(msg && (msg.hasOwnProperty('payload') || msg.hasOwnProperty('raw')))) return;
@@ -61,11 +62,25 @@ module.exports = function (RED) {
         }
 
         function nodeStatusDisconnected() {
-            node.status({fill: "red", shape: "dot", text: "disconnected"});
+            if(node.currentError == null){
+                node.status({fill: "red", shape: "dot", text: "disconnected"});
+            } else {
+                nodeStatusDisconnectedWithError(node.currentError);
+            }
+        }
+        
+        function nodeStatusDisconnectedWithError(error) {
+            var statusText = "disconnected (" + error + ")";
+            node.status({fill: "red", shape: "dot", text: statusText});
         }
 
         function nodeStatusConnecting() {
             node.status({fill: "green", shape: "ring", text: "connecting"});
+        }
+        
+        function nodeStatusDisconnectedWithError(error) {
+            var statusText = "disconnected (" + error.code + ")";
+            node.status({fill: "red", shape: "dot", text: statusText});
         }
 
         this.send = function (data, sendRaw, callback) {
@@ -95,6 +110,10 @@ module.exports = function (RED) {
                 connection.on('connect', nodeStatusConnected);
                 connection.removeListener('close', nodeStatusDisconnected);
                 connection.on('close', nodeStatusDisconnected);
+                connection.on('error', function (err) {
+                    node.currentError = err;
+                    nodeStatusDisconnectedWithError(err);
+                });
 
                 try {
                     node.log("send:  " + JSON.stringify(data));
