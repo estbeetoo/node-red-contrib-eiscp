@@ -43,6 +43,11 @@ module.exports = function (RED) {
         function nodeStatusDisconnected() {
             node.status({fill: "red", shape: "dot", text: "disconnected"});
         }
+        
+        function nodeStatusDisconnectedWithError(error) {
+            var statusText = "disconnected (" + error.code + ")";
+            node.status({fill: "red", shape: "dot", text: statusText});
+        }
 
         node.receiveData = function (data) {
             node.log('eiscp event data[' + data.toString('hex') + ']');
@@ -70,6 +75,9 @@ module.exports = function (RED) {
             node.connection.on('connect', nodeStatusConnected);
             node.connection.removeListener('close', nodeStatusDisconnected);
             node.connection.on('close', nodeStatusDisconnected);
+            node.connection.on('error', function (err) {
+                    nodeStatusDisconnectedWithError(err);
+            });
         });
     }
 
